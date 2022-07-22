@@ -14,10 +14,7 @@ import tkinter
 class ClusteringObject:
     @staticmethod
     def main(logPath: str, startRowRegExp: str, pr: tkinter.Tk) -> ClusteringResult:
-
-        print(logPath)
-        print(startRowRegExp)
-
+        startRowRegExp = f'({startRowRegExp})'
         textFile = DataRetriever.readFile(logPath)
         countRows = 0
         texts = DataRetriever.splitText(startRowRegExp, textFile, countRows)

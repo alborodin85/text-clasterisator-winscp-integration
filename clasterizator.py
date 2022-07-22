@@ -1,13 +1,9 @@
 import sys
 import tkinter
 from tkinter import *
-
 import pandas
-
 from ClusteringResult import ClusteringResult
-
 import numpy
-
 from ClusteringObject import ClusteringObject
 import string
 import subprocess
@@ -22,7 +18,6 @@ def openInSublime():
 def startClustering(logPath):
     startRowRegExp = str(regExpEntry.get())
     clusteringResult = ClusteringObject().main(logPath, startRowRegExp, window)
-    # clusteringResult.printSelf()
     renderResult(clusteringResult)
 
 
@@ -70,8 +65,6 @@ window.protocol("WM_DELETE_WINDOW", onWindowClose)
 
 logPath = sys.argv[1] if len(sys.argv) > 1 else ''
 
-print(logPath)
-
 topContainer = LabelFrame(window, bd=3, height=50, text='Журнальный файл')
 topContainer.pack(expand=False, fill=BOTH, pady=5, padx=5)
 logPathLabel = tkinter.Label(topContainer, text=logPath, anchor='w')
@@ -80,7 +73,7 @@ openInSublimeButton = Button(topContainer, text="Открыть весь лог 
 openInSublimeButton.place(height=29, relwidth=0.29, y=12, relx=0.7, anchor='w')
 
 startRowRegExp = tkinter.StringVar()
-startRowRegExp.set(r'(\d{4}-\d{2}-\d{2} {1,2}\d{1,2}:\d{2}:\d{2})')
+startRowRegExp.set(r'\d{4}-\d{2}-\d{2} {1,2}\d{1,2}:\d{2}:\d{2}')
 regExpContainer = LabelFrame(window, text='Определитель начала строк', bd=3, height=50)
 regExpContainer.pack(expand=False, fill=BOTH, pady=5, padx=5)
 regExpLabel = tkinter.Label(regExpContainer, text='RegExp для начала строк:', anchor='e')
@@ -110,7 +103,12 @@ tempFolder = tempFolder[0]
 tempFolder = winreg.ExpandEnvironmentStrings(tempFolder)
 clusterTempFile = tempFolder + r'\log-cluster.txt'
 
-settingsFile = open('settings.json', 'w')
+currentScriptPath = sys.argv[0]
+currentScriptPath = currentScriptPath.replace('/', '\\')
+lastSlashPos = currentScriptPath.rfind('\\')
+currentScriptFolder = currentScriptPath[:lastSlashPos]
+settingsFileName = currentScriptFolder + r'\settings.json'
+settingsFile = open(settingsFileName, 'w')
 settingsFile.close()
 
 def clustersListboxClick(event: tkinter.Event, clusteringResult: ClusteringResult):
