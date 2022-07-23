@@ -2,26 +2,30 @@ from ClusteringObject import ClusteringObject
 from FilePathController import FilePathController
 from WindowFormController import WindowFormController
 from WindowFormEventHandler import WindowFormEventHandler
+from SettingsController import SettingsController
 
 
 def startClustering(logPathLocal):
-    startRowRegExpLocal = str(windowFormController.regExpEntry.get())
-    clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExpLocal, windowFormController.window)
-    windowFormEventHandler.renderResult(clusteringResult)
+    startRowRegExp = str(windowFormController.regExpEntry.get())
+    settingsController.saveRegExp(startRowRegExp)
+    if startRowRegExp and logPathLocal:
+        clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController.window)
+        windowFormEventHandler.renderResult(clusteringResult)
 
 
 currentScriptFolder = FilePathController.getScriptFolder()
 clusterTempFile = FilePathController.getClusterTempFilePath()
 textEditorPath = r'C:\Program Files\Sublime Text\sublime_text.exe'
-startRowRowRegExpInit = r'\d{4}-\d{2}-\d{2} {1,2}\d{1,2}:\d{2}:\d{2}'
 logPath = FilePathController.getLogPath()
+settingsController = SettingsController(currentScriptFolder, logPath)
+startRowRegExpInit = settingsController.getRegExp()
 
 windowFormController = WindowFormController(
     currentScriptFolder=currentScriptFolder,
     windowWidth=700,
     windowHeight=600,
     logPath=logPath,
-    startRowRowRegExpInit=startRowRowRegExpInit,
+    startRowRegExpInit=startRowRegExpInit,
     startClusteringCallback=startClustering
 )
 windowFormEventHandler = WindowFormEventHandler(

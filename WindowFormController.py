@@ -2,7 +2,7 @@ import tkinter
 
 
 class WindowFormController:
-    def __init__(self, currentScriptFolder: str, windowWidth: int, windowHeight: int, logPath: str, startRowRowRegExpInit: str, startClusteringCallback: callable):
+    def __init__(self, currentScriptFolder: str, windowWidth: int, windowHeight: int, logPath: str, startRowRegExpInit: str, startClusteringCallback: callable):
         window = tkinter.Tk()
         window.title("Кластеризатор сообщений журнальных файлов")
         window.minsize(windowWidth, windowHeight)
@@ -19,22 +19,21 @@ class WindowFormController:
         self.openClusterInSublimeButton = tkinter.Button()
 
         self.buildTopContainer(logPath)
-        self.buildRegExpContainer(startRowRowRegExpInit, lambda: startClusteringCallback(logPath))
+        self.buildRegExpContainer(startRowRegExpInit, lambda: startClusteringCallback(logPath))
         self.buildBodyContainer()
-        self.buildSearchContainer()
 
     def buildTopContainer(self, logPath: str):
         topContainer = tkinter.LabelFrame(self.window, bd=3, height=50, text='Журнальный файл')
         topContainer.pack(expand=False, fill=tkinter.BOTH, pady=5, padx=5)
         logPathLabel = tkinter.Label(topContainer, text=logPath, anchor='w')
         logPathLabel.place(height=26, y=13, x=3, relwidth=0.68, anchor='w')
-        openInSublimeButton = tkinter.Button(topContainer, text="Открыть весь лог в SublimeText")
+        openInSublimeButton = tkinter.Button(topContainer, text="Открыть весь лог в редакторе")
         openInSublimeButton.place(height=29, relwidth=0.29, y=12, relx=0.7, anchor='w')
         self.openInSublimeButton = openInSublimeButton
 
-    def buildRegExpContainer(self, startRowRowRegExpInit: str, startClusterCallback: callable):
+    def buildRegExpContainer(self, startRowRegExpInit: str, startClusterCallback: callable):
         startRowRegExp = tkinter.StringVar()
-        startRowRegExp.set(startRowRowRegExpInit)
+        startRowRegExp.set(startRowRegExpInit)
         regExpContainer = tkinter.LabelFrame(self.window, text='Определитель начала строк', bd=3, height=50)
         regExpContainer.pack(expand=False, fill=tkinter.BOTH, pady=5, padx=5)
         regExpLabel = tkinter.Label(regExpContainer, text='RegExp для начала строк:', anchor='e')
@@ -56,7 +55,7 @@ class WindowFormController:
         self.clustersListbox = clustersListbox
         messagesContainer = tkinter.LabelFrame(bodyContainer, text='Сообщения', bd=3, padx=5, pady=5)
         messagesContainer.place(relheight=1, relx=0.3, relwidth=0.68, rely=0.5, anchor='w')
-        openClusterInSublimeButton = tkinter.Button(messagesContainer, text='Открыть кластер в SublimeText')
+        openClusterInSublimeButton = tkinter.Button(messagesContainer, text='Открыть кластер в редакторе')
         openClusterInSublimeButton.place(relx=1, width=200, rely=0, anchor='ne')
         self.openClusterInSublimeButton = openClusterInSublimeButton
         messagesListbox = tkinter.Listbox(messagesContainer)
