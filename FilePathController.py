@@ -1,6 +1,7 @@
 import sys
 import winreg
 
+
 class FilePathController:
     @staticmethod
     def getScriptFolder():

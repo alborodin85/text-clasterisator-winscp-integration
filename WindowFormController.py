@@ -2,7 +2,7 @@ import tkinter
 
 
 class WindowFormController:
-    def __init__(self, currentScriptFolder: str, windowWidth: int, windowHeight: int):
+    def __init__(self, currentScriptFolder: str, windowWidth: int, windowHeight: int, logPath: str, startRowRowRegExpInit: str, startClusteringCallback: callable):
         window = tkinter.Tk()
         window.title("Кластеризатор сообщений журнальных файлов")
         window.minsize(windowWidth, windowHeight)
@@ -17,6 +17,11 @@ class WindowFormController:
         self.messagesListbox = tkinter.Listbox()
         self.messageTextBox = tkinter.Text()
         self.openClusterInSublimeButton = tkinter.Button()
+
+        self.buildTopContainer(logPath)
+        self.buildRegExpContainer(startRowRowRegExpInit, lambda: startClusteringCallback(logPath))
+        self.buildBodyContainer()
+        self.buildSearchContainer()
 
     def buildTopContainer(self, logPath: str):
         topContainer = tkinter.LabelFrame(self.window, bd=3, height=50, text='Журнальный файл')

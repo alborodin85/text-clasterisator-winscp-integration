@@ -2,16 +2,21 @@ import tkinter
 import os
 import subprocess
 import sys
+import numpy
+import pandas
 from ClusteringResult import ClusteringResult
 from WindowFormController import WindowFormController
 
 
 class WindowFormEventHandler:
-    def __init__(self, windowWidth: int, windowHeight: int, clusterTempFile: str, textEditorPath: str):
+    def __init__(self, windowWidth: int, windowHeight: int, clusterTempFile: str, textEditorPath: str, windowFormController: WindowFormController):
         self.windowWidth = windowWidth
         self.windowHeight = windowHeight
         self.clusterTempFile = clusterTempFile
         self.textEditorPath = textEditorPath
+        self.windowFormController = windowFormController
+        self.selectedCluster = 0
+        self.clusteringResult = ClusteringResult(numpy.zeros(1), [], [], [], numpy.zeros(1), pandas.Series([], dtype=object))
 
     def onWindowChange(self, event: tkinter.Event):
         self.windowWidth = event.width
@@ -27,17 +32,18 @@ class WindowFormEventHandler:
         if needQuit:
             quit()
 
-    def openClusterInSublime(self, clusteringResult: ClusteringResult, selectedCluster: int):
+    def openClusterInSublime(self):
         f = open(self.clusterTempFile, 'w')
-        for messageId in clusteringResult.clustersItems[selectedCluster]:
-            f.write(clusteringResult.texts[messageId])
+        for messageId in self.clusteringResult.clustersItems[self.selectedCluster]:
+            f.write(self.clusteringResult.texts[messageId])
         f.close()
         subprocess.Popen([self.textEditorPath, self.clusterTempFile])
 
-    def renderResult(self, clusteringResult: ClusteringResult, windowFormController: WindowFormController):
-        clustersListbox = windowFormController.clustersListbox
+    def renderResult(self, clusteringResult: ClusteringResult):
+        self.clusteringResult = clusteringResult
+        clustersListbox = self.windowFormController.clustersListbox
         clustersListbox.delete(0, tkinter.END)
-        clustersListbox.bind('<<ListboxSelect>>', lambda event: self.clustersListboxClick(event, clusteringResult, windowFormController))
+        # clustersListbox.bind('<<ListboxSelect>>', lambda event: self.clustersListboxClick(event, clusteringResult))
         for i in range(len(clusteringResult.clustersWords)):
             clusterText = ''
             clusterText += '(' + str(clusteringResult.clustersItemsCount[i]) + ')'
@@ -45,22 +51,23 @@ class WindowFormEventHandler:
             clusterText += ', '.join(clusteringResult.clustersWords[i])
             clustersListbox.insert(tkinter.END, clusterText)
 
-    def clustersListboxClick(self, event: tkinter.Event, clusteringResult: ClusteringResult, windowFormController: WindowFormController):
-        messagesListbox = windowFormController.messagesListbox
-        openClusterInSublimeButton = windowFormController.openClusterInSublimeButton
-        messageTextBox = windowFormController.messageTextBox
+    def clustersListboxClick(self, event: tkinter.Event):
+        messagesListbox = self.windowFormController.messagesListbox
+        openClusterInSublimeButton = self.windowFormController.openClusterInSublimeButton
+        messageTextBox = self.windowFormController.messageTextBox
+        clustersListbox = self.windowFormController.clustersListbox
 
-        listbox = event.widget
-        currSelection = listbox.curselection()
+        currSelection = clustersListbox.curselection()
         if not len(currSelection):
             return
         selectedCluster = currSelection[0]
-        cluster = clusteringResult.clustersItems[selectedCluster]
+        self.selectedCluster = selectedCluster
+        cluster = self.clusteringResult.clustersItems[selectedCluster]
         messagesListbox.delete(0, tkinter.END)
-        messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: self.messagesListBoxClick(listboxEvent, messageTextBox))
-        openClusterInSublimeButton.bind("<Button-1>", lambda buttonEvent: self.openClusterInSublime(clusteringResult, selectedCluster))
+        # messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: self.messagesListBoxClick(listboxEvent, messageTextBox))
+        # openClusterInSublimeButton.bind("<Button-1>", lambda buttonEvent: self.openClusterInSublime(clusteringResult))
         for i in cluster:
-            messagesListbox.insert(tkinter.END, clusteringResult.texts[i])
+            messagesListbox.insert(tkinter.END, self.clusteringResult.texts[i])
 
     @staticmethod
     def messagesListBoxClick(event: tkinter.Event, messageTextBox: tkinter.Text):
