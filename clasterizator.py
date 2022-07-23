@@ -3,14 +3,28 @@ from FilePathController import FilePathController
 from WindowFormController import WindowFormController
 from WindowFormEventHandler import WindowFormEventHandler
 from SettingsController import SettingsController
+import tkinter
 
 
 def startClustering(logPathLocal):
     startRowRegExp = str(windowFormController.regExpEntry.get())
     settingsController.saveRegExp(startRowRegExp)
     if startRowRegExp and logPathLocal:
+        windowFormController.clustersListbox.delete(0, tkinter.END)
+        windowFormController.messagesListbox.delete(0, tkinter.END)
+        windowFormController.messageTextBox['state'] = tkinter.NORMAL
+        windowFormController.messageTextBox.delete(1.0, tkinter.END)
+        windowFormController.messageTextBox.insert(1.0, f'Начат процесс кластеризации. Подготовка текста...\n')
+        windowFormController.clustersListContainer['text'] = '----------'
+        windowFormController.startClusteringButton['relief'] = tkinter.SUNKEN
+        windowFormController.window.update()
+
         clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController.window)
         windowFormEventHandler.renderResult(clusteringResult)
+
+        windowFormController.clustersListContainer['text'] = f'Кластеры ({len(clusteringResult.clustersItems)})'
+        windowFormController.messageTextBox['state'] = tkinter.DISABLED
+        windowFormController.startClusteringButton['relief'] = tkinter.RAISED
 
 
 currentScriptFolder = FilePathController.getScriptFolder()
@@ -26,21 +40,43 @@ windowFormController = WindowFormController(
     windowHeight=600,
     logPath=logPath,
     startRowRegExpInit=startRowRegExpInit,
-    startClusteringCallback=startClustering
+    textEditorPathInit=textEditorPath
 )
 windowFormEventHandler = WindowFormEventHandler(
     windowWidth=windowFormController.windowWidth,
     windowHeight=windowFormController.windowHeight,
     clusterTempFile=clusterTempFile,
-    textEditorPath=textEditorPath,
+    textEditorPath=str(windowFormController.textEditorEntry.get()),
     windowFormController=windowFormController
 )
 
 windowFormController.window.bind("<Configure>", windowFormEventHandler.onWindowChange)
 windowFormController.window.protocol("WM_DELETE_WINDOW", windowFormEventHandler.onWindowClose)
+windowFormController.startClusteringButton.bind("<Button-1>", lambda event: startClustering(logPath))
 windowFormController.openInSublimeButton.bind("<Button-1>", windowFormEventHandler.openInSublime)
 windowFormController.messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: windowFormEventHandler.messagesListBoxClick(listboxEvent, windowFormController.messageTextBox))
 windowFormController.clustersListbox.bind('<<ListboxSelect>>', lambda event: windowFormEventHandler.clustersListboxClick(event))
 windowFormController.openClusterInSublimeButton.bind("<Button-1>", lambda buttonEvent: windowFormEventHandler.openClusterInSublime())
+
+windowFormController.window.bind(
+    "<<textPrepareFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(2.0, f'Подготовка текста завершена. Удаление редких слов...\n')
+)
+windowFormController.window.bind(
+    "<<textClearRearWordsFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(3.0, f'Удаление редких слов завершено. Процесс TF-IDF...\n')
+)
+windowFormController.window.bind(
+    "<<tfidfFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(4.0, f'Процесс TF-IDF завершен. Birch-кластеризация...\n')
+)
+windowFormController.window.bind(
+    "<<birchClusteringFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(5.0, f'Birch-кластеризация завершена. Обработка результатов...\n')
+)
+windowFormController.window.bind(
+    "<<parsePredictionFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(6.0, f'Обработка результатов завершена. Процесс окончен.\n')
+)
 
 windowFormController.window.mainloop()
