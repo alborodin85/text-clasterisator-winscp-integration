@@ -45,24 +45,41 @@ class WindowFormController:
         startClusteringButton.place(height=29, relwidth=0.19, y=12, relx=0.8, anchor='w')
         self.startClusteringButton = startClusteringButton
 
+    # noinspection DuplicatedCode
     def buildBodyContainer(self):
         bodyContainer = tkinter.Frame(self.window)
         bodyContainer.pack(pady=5, padx=5, fill=tkinter.BOTH, expand=True)
         clustersListContainer = tkinter.LabelFrame(bodyContainer, text='Clusters', bd=3, padx=5, pady=5)
         clustersListContainer.place(relheight=1, x=3, relwidth=0.28, rely=0.5, anchor='w')
-        clustersListbox = tkinter.Listbox(clustersListContainer)
-        clustersListbox.place(relheight=1, relx=0, rely=0.5, relwidth=1, anchor='w')
+        clusterScrollBar = tkinter.Scrollbar(clustersListContainer)
+        clusterScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
+        clustersListbox = tkinter.Listbox(clustersListContainer, yscrollcommand=clusterScrollBar.set)
+        clusterScrollBar.config(command=clustersListbox.yview)
+        clustersListbox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
         self.clustersListbox = clustersListbox
+
         messagesContainer = tkinter.LabelFrame(bodyContainer, text='Сообщения', bd=3, padx=5, pady=5)
         messagesContainer.place(relheight=1, relx=0.3, relwidth=0.68, rely=0.5, anchor='w')
         openClusterInSublimeButton = tkinter.Button(messagesContainer, text='Открыть кластер в редакторе')
         openClusterInSublimeButton.place(relx=1, width=200, rely=0, anchor='ne')
         self.openClusterInSublimeButton = openClusterInSublimeButton
-        messagesListbox = tkinter.Listbox(messagesContainer)
-        messagesListbox.place(relx=0, relwidth=1, rely=0.08, relheight=0.45, anchor='nw')
+
+        messagesListboxContainer = tkinter.Frame(messagesContainer)
+        messagesListboxContainer.place(relx=0, relwidth=1, rely=0.08, relheight=0.45, anchor='nw')
+        messagesListBoxScrollBar = tkinter.Scrollbar(messagesListboxContainer)
+        messagesListBoxScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
+        messagesListbox = tkinter.Listbox(messagesListboxContainer, yscrollcommand=messagesListBoxScrollBar.set)
+        messagesListBoxScrollBar.config(command=messagesListbox.yview)
+        messagesListbox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
         self.messagesListbox = messagesListbox
-        messageTextBox = tkinter.Text(messagesContainer, wrap=tkinter.WORD, state=tkinter.DISABLED)
-        messageTextBox.place(relx=0, relwidth=1, rely=0.56, relheight=0.43, anchor='nw')
+
+        messageTextBoxContainer = tkinter.Frame(messagesContainer)
+        messageTextBoxContainer.place(relx=0, relwidth=1, rely=0.56, relheight=0.43, anchor='nw')
+        messageTextBoxScrollBar = tkinter.Scrollbar(messageTextBoxContainer)
+        messageTextBoxScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
+        messageTextBox = tkinter.Text(messageTextBoxContainer, wrap=tkinter.WORD, state=tkinter.DISABLED, yscrollcommand=messageTextBoxScrollBar.set)
+        messageTextBoxScrollBar.config(command=messageTextBox.yview)
+        messageTextBox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
         self.messageTextBox = messageTextBox
 
     def buildSearchContainer(self):
