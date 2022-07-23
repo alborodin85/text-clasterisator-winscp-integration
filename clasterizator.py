@@ -3,6 +3,7 @@ from FilePathController import FilePathController
 from WindowFormController import WindowFormController
 from WindowFormEventHandler import WindowFormEventHandler
 from SettingsController import SettingsController
+from TextEditorSettingsController import TextEditorSettingsController
 import tkinter
 
 
@@ -16,7 +17,6 @@ def startClustering(logPathLocal):
         windowFormController.messageTextBox.delete(1.0, tkinter.END)
         windowFormController.messageTextBox.insert(1.0, f'Начат процесс кластеризации. Подготовка текста...\n')
         windowFormController.clustersListContainer['text'] = '----------'
-        windowFormController.startClusteringButton['relief'] = tkinter.SUNKEN
         windowFormController.window.update()
 
         clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController.window)
@@ -24,12 +24,12 @@ def startClustering(logPathLocal):
 
         windowFormController.clustersListContainer['text'] = f'Кластеры ({len(clusteringResult.clustersItems)})'
         windowFormController.messageTextBox['state'] = tkinter.DISABLED
-        windowFormController.startClusteringButton['relief'] = tkinter.RAISED
 
 
 currentScriptFolder = FilePathController.getScriptFolder()
 clusterTempFile = FilePathController.getClusterTempFilePath()
-textEditorPath = r'C:\Program Files\Sublime Text\sublime_text.exe'
+textEditorSettingsController = TextEditorSettingsController(currentScriptFolder)
+textEditorPath = textEditorSettingsController.getTextEditorPath()
 logPath = FilePathController.getLogPath()
 settingsController = SettingsController(currentScriptFolder, logPath)
 startRowRegExpInit = settingsController.getRegExp()
@@ -46,17 +46,18 @@ windowFormEventHandler = WindowFormEventHandler(
     windowWidth=windowFormController.windowWidth,
     windowHeight=windowFormController.windowHeight,
     clusterTempFile=clusterTempFile,
-    textEditorPath=str(windowFormController.textEditorEntry.get()),
-    windowFormController=windowFormController
+    windowFormController=windowFormController,
+    textEditorEntry=windowFormController.textEditorEntry
 )
 
 windowFormController.window.bind("<Configure>", windowFormEventHandler.onWindowChange)
 windowFormController.window.protocol("WM_DELETE_WINDOW", windowFormEventHandler.onWindowClose)
-windowFormController.startClusteringButton.bind("<Button-1>", lambda event: startClustering(logPath))
+windowFormController.startClusteringButton['command'] = lambda: startClustering(logPath)
 windowFormController.openInSublimeButton.bind("<Button-1>", windowFormEventHandler.openInSublime)
 windowFormController.messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: windowFormEventHandler.messagesListBoxClick(listboxEvent, windowFormController.messageTextBox))
 windowFormController.clustersListbox.bind('<<ListboxSelect>>', lambda event: windowFormEventHandler.clustersListboxClick(event))
-windowFormController.openClusterInSublimeButton.bind("<Button-1>", lambda buttonEvent: windowFormEventHandler.openClusterInSublime())
+windowFormController.openClusterInSublimeButton.bind("<Button-1>", lambda event: windowFormEventHandler.openClusterInSublime())
+windowFormController.saveTextEditorButton['command'] = lambda: textEditorSettingsController.checkAndSavePath(windowFormController.textEditorEntry)
 
 windowFormController.window.bind(
     "<<textPrepareFinishedEvent>>",

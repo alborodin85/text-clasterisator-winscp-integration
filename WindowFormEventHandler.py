@@ -9,14 +9,14 @@ from WindowFormController import WindowFormController
 
 
 class WindowFormEventHandler:
-    def __init__(self, windowWidth: int, windowHeight: int, clusterTempFile: str, textEditorPath: str, windowFormController: WindowFormController):
+    def __init__(self, windowWidth: int, windowHeight: int, clusterTempFile: str, windowFormController: WindowFormController, textEditorEntry: tkinter.Entry):
         self.windowWidth = windowWidth
         self.windowHeight = windowHeight
         self.clusterTempFile = clusterTempFile
-        self.textEditorPath = textEditorPath
         self.windowFormController = windowFormController
         self.selectedCluster = 0
         self.clusteringResult = ClusteringResult(numpy.zeros(1), [], [], [], numpy.zeros(1), pandas.Series([], dtype=object))
+        self.textEditorEntry = textEditorEntry
 
     def onWindowChange(self, event: tkinter.Event):
         self.windowWidth = event.width
@@ -27,23 +27,25 @@ class WindowFormEventHandler:
             os.remove(self.clusterTempFile)
         quit()
 
+    # noinspection PyUnusedLocal
     def openInSublime(self, event: tkinter.Event, needQuit=False):
-        subprocess.Popen([self.textEditorPath, sys.argv[1]])
+        subprocess.Popen([str(self.textEditorEntry.get()), sys.argv[1]])
         if needQuit:
             quit()
 
     def openClusterInSublime(self):
+        if not self.clusteringResult.clustersItems:
+            return
         f = open(self.clusterTempFile, 'w')
         for messageId in self.clusteringResult.clustersItems[self.selectedCluster]:
             f.write(self.clusteringResult.texts[messageId])
         f.close()
-        subprocess.Popen([self.textEditorPath, self.clusterTempFile])
+        subprocess.Popen([str(self.textEditorEntry.get()), self.clusterTempFile])
 
     def renderResult(self, clusteringResult: ClusteringResult):
         self.clusteringResult = clusteringResult
         clustersListbox = self.windowFormController.clustersListbox
         clustersListbox.delete(0, tkinter.END)
-        # clustersListbox.bind('<<ListboxSelect>>', lambda event: self.clustersListboxClick(event, clusteringResult))
         for i in range(len(clusteringResult.clustersWords)):
             clusterText = ''
             clusterText += '(' + str(clusteringResult.clustersItemsCount[i]) + ')'
@@ -51,6 +53,7 @@ class WindowFormEventHandler:
             clusterText += ', '.join(clusteringResult.clustersWords[i])
             clustersListbox.insert(tkinter.END, clusterText)
 
+    # noinspection PyUnusedLocal
     def clustersListboxClick(self, event: tkinter.Event):
         messagesListbox = self.windowFormController.messagesListbox
         openClusterInSublimeButton = self.windowFormController.openClusterInSublimeButton
@@ -64,8 +67,6 @@ class WindowFormEventHandler:
         self.selectedCluster = selectedCluster
         cluster = self.clusteringResult.clustersItems[selectedCluster]
         messagesListbox.delete(0, tkinter.END)
-        # messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: self.messagesListBoxClick(listboxEvent, messageTextBox))
-        # openClusterInSublimeButton.bind("<Button-1>", lambda buttonEvent: self.openClusterInSublime(clusteringResult))
         for i in cluster:
             messagesListbox.insert(tkinter.END, self.clusteringResult.texts[i])
 
