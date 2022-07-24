@@ -1,4 +1,5 @@
 import tkinter
+import tkinter.messagebox
 import os
 import subprocess
 import sys
@@ -27,11 +28,14 @@ class WindowFormEventHandler:
             os.remove(self.clusterTempFile)
         quit()
 
-    # noinspection PyUnusedLocal
-    def openInSublime(self, event: tkinter.Event, needQuit=False):
-        subprocess.Popen([str(self.textEditorEntry.get()), sys.argv[1]])
-        if needQuit:
-            quit()
+    def openInSublime(self, needQuit=False):
+        # noinspection PyBroadException
+        try:
+            subprocess.Popen([str(self.textEditorEntry.get()), sys.argv[1]])
+            if needQuit:
+                quit()
+        except:
+            tkinter.messagebox.showwarning("Предупреждение", "Не удалось открыть редактор")
 
     def openClusterInSublime(self):
         if not self.clusteringResult.clustersItems:
@@ -40,7 +44,11 @@ class WindowFormEventHandler:
         for messageId in self.clusteringResult.clustersItems[self.selectedCluster]:
             f.write(self.clusteringResult.texts[messageId])
         f.close()
-        subprocess.Popen([str(self.textEditorEntry.get()), self.clusterTempFile])
+        # noinspection PyBroadException
+        try:
+            subprocess.Popen([str(self.textEditorEntry.get()), self.clusterTempFile])
+        except:
+            tkinter.messagebox.showwarning("Предупреждение", "Не удалось открыть редактор")
 
     def renderResult(self, clusteringResult: ClusteringResult):
         self.clusteringResult = clusteringResult
