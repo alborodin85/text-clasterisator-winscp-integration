@@ -54,9 +54,9 @@ class WindowFormController:
     def buildRegExpContainer(self, startRowRegExpInit: str):
         startRowRegExp = tkinter.StringVar()
         startRowRegExp.set(startRowRegExpInit)
-        regExpContainer = tkinter.LabelFrame(self.window, text='Определитель начала строк', bd=3, height=50)
+        regExpContainer = tkinter.LabelFrame(self.window, text='Определитель начала сообщений', bd=3, height=50)
         regExpContainer.pack(expand=False, fill=tkinter.BOTH, pady=5, padx=5)
-        regExpLabel = tkinter.Label(regExpContainer, text='RegExp для начала строк:', anchor='e')
+        regExpLabel = tkinter.Label(regExpContainer, text='RegExp для начала сообщения:', anchor='e')
         regExpLabel.place(height=26, y=13, x=3, relwidth=0.23, anchor='w')
         regExpEntry = tkinter.Entry(regExpContainer, textvariable=startRowRegExp)
         regExpEntry.place(height=26, y=13, relx=0.25, relwidth=0.53, anchor='w')
