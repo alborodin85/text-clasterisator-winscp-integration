@@ -36,7 +36,7 @@ startRowRegExpInit = settingsController.getRegExp()
 
 windowFormController = WindowFormController(
     currentScriptFolder=currentScriptFolder,
-    windowWidth=700,
+    windowWidth=800,
     windowHeight=600,
     logPath=logPath,
     startRowRegExpInit=startRowRegExpInit,
