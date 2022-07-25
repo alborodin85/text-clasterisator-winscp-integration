@@ -31,7 +31,7 @@ clusterTempFile = FilePathController.getClusterTempFilePath()
 textEditorSettingsController = TextEditorSettingsController(currentScriptFolder)
 textEditorPath = textEditorSettingsController.getTextEditorPath()
 logPath = FilePathController.getLogPath()
-settingsController = SettingsController(currentScriptFolder, logPath)
+settingsController = SettingsController(currentScriptFolder, logPath, textEditorPath)
 startRowRegExpInit = settingsController.getRegExp()
 
 windowFormController = WindowFormController(
@@ -58,6 +58,7 @@ windowFormController.messagesListbox.bind('<<ListboxSelect>>', lambda listboxEve
 windowFormController.clustersListbox.bind('<<ListboxSelect>>', lambda event: windowFormEventHandler.clustersListboxClick(event))
 windowFormController.openClusterInSublimeButton['command'] = lambda: windowFormEventHandler.openClusterInSublime()
 windowFormController.saveTextEditorButton['command'] = lambda: textEditorSettingsController.checkAndSavePath(windowFormController.textEditorEntry)
+windowFormController.settingsButton['command'] = settingsController.openSettingsInEditor
 
 windowFormController.window.bind(
     "<<textPrepareFinishedEvent>>",
