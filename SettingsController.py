@@ -1,14 +1,17 @@
 import json
 import os
 import re
+import subprocess
+import tkinter.messagebox
 
 
 class SettingsController:
-    def __init__(self, currentScriptFolder: str, logPath: str):
+    def __init__(self, currentScriptFolder: str, logPath: str, textEditorPath: str):
         self.logPath = logPath.replace('\\', '/')
         self.settingsFileName = currentScriptFolder + r'\settings.json'
         self.startRowRegExp = ''
         self.settings = []
+        self.textEditorPath = textEditorPath
         if os.path.exists(self.settingsFileName):
             settingsFile = open(self.settingsFileName, 'r')
             self.settings = json.load(settingsFile)
@@ -17,6 +20,34 @@ class SettingsController:
         else:
             settingsFile = open(self.settingsFileName, 'w')
             settingsFile.close()
+
+    def openSettingsInEditor(self):
+        # noinspection PyBroadException
+        try:
+            subprocess.Popen([self.textEditorPath, self.settingsFileName])
+        except:
+            tkinter.messagebox.showwarning("Предупреждение", "Не удалось открыть редактор")
+
+    def getRegExp(self):
+        return self.startRowRegExp
+
+    def saveRegExp(self, startRowRegExp: str):
+        self.startRowRegExp = startRowRegExp
+        isSettingsExists = False
+        for i in range(len(self.settings)):
+            if self.__isSettingsFit(self.settings[i]):
+                self.settings[i]['regExp'] = self.startRowRegExp
+                isSettingsExists = True
+                break
+        if not isSettingsExists:
+            self.settings.append({
+                'path': self.__getSettingsLogPath(),
+                'regExp': self.startRowRegExp
+            })
+
+        settingsFile = open(self.settingsFileName, 'w')
+        json.dump(self.settings, settingsFile, indent=4)
+        settingsFile.close()
 
     def __parseSettingsFile(self):
         for settingsItem in self.settings:
@@ -51,24 +82,3 @@ class SettingsController:
             settingsLogPath += settingsLogPathItems[i]
 
         return settingsLogPath
-
-    def getRegExp(self):
-        return self.startRowRegExp
-
-    def saveRegExp(self, startRowRegExp: str):
-        self.startRowRegExp = startRowRegExp
-        isSettingsExists = False
-        for i in range(len(self.settings)):
-            if self.__isSettingsFit(self.settings[i]):
-                self.settings[i]['regExp'] = self.startRowRegExp
-                isSettingsExists = True
-                break
-        if not isSettingsExists:
-            self.settings.append({
-                'path': self.__getSettingsLogPath(),
-                'regExp': self.startRowRegExp
-            })
-
-        settingsFile = open(self.settingsFileName, 'w')
-        json.dump(self.settings, settingsFile, indent=4)
-        settingsFile.close()

@@ -22,6 +22,7 @@ class WindowFormController:
         self.textEditorEntry = tkinter.Entry()
         self.saveTextEditorButton = tkinter.Button()
         self.clustersListContainer = tkinter.LabelFrame()
+        self.settingsButton = tkinter.Button()
 
         self.buildTextEditorContainer(textEditorPathInit)
         self.buildTopContainer(logPath)
@@ -59,11 +60,16 @@ class WindowFormController:
         regExpLabel = tkinter.Label(regExpContainer, text='RegExp для начала сообщения:', anchor='e')
         regExpLabel.place(height=26, y=13, x=3, relwidth=0.23, anchor='w')
         regExpEntry = tkinter.Entry(regExpContainer, textvariable=startRowRegExp)
-        regExpEntry.place(height=26, y=13, relx=0.25, relwidth=0.53, anchor='w')
+        regExpEntry.place(height=26, y=13, relx=0.25, relwidth=0.43, anchor='w')
         self.regExpEntry = regExpEntry
+
         startClusteringButton = tkinter.Button(regExpContainer, text="Кластеризовать")
-        startClusteringButton.place(height=29, relwidth=0.19, y=12, relx=0.8, anchor='w')
+        startClusteringButton.place(height=29, relwidth=0.14, y=12, relx=0.7, anchor='w')
         self.startClusteringButton = startClusteringButton
+
+        settingsButton = tkinter.Button(regExpContainer, text="settings.json")
+        settingsButton.place(height=29, relwidth=0.14, y=12, relx=0.85, anchor='w')
+        self.settingsButton = settingsButton
 
     # noinspection DuplicatedCode
     def buildBodyContainer(self):

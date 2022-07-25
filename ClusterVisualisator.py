@@ -2,7 +2,7 @@ import numpy
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 class ClusterVisualisator:
     @staticmethod
