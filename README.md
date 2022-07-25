@@ -8,7 +8,16 @@
 ```
 python -V
 ```
-2. Создать локальную папку и клонировать в нее данный репозиторий:
+2. Установить необходимые модули для python:
+```
+pip install sklearn
+pip install pandas
+pip install numpy
+pip install matplotlib
+pip install cdbw
+pip install nltk
+```
+3. Создать локальную папку и клонировать в нее данный репозиторий:
 ```
 md "C:\borodin_admin\Институт\_ВКР\2022-06-14 Приложение\test-install"
 cd "C:\borodin_admin\Институт\_ВКР\2022-06-14 Приложение\test-install"
