@@ -16,6 +16,7 @@ class WindowFormController:
         self.startClusteringButton = tkinter.Button()
         self.regExpEntry = tkinter.Entry()
         self.clustersListbox = tkinter.Listbox()
+        self.clusterTextBox = tkinter.Text()
         self.messagesListbox = tkinter.Listbox()
         self.messageTextBox = tkinter.Text()
         self.openClusterInSublimeButton = tkinter.Button()
@@ -75,9 +76,10 @@ class WindowFormController:
     def buildBodyContainer(self):
         bodyContainer = tkinter.Frame(self.window)
         bodyContainer.pack(pady=5, padx=5, fill=tkinter.BOTH, expand=True)
+
         clustersListContainer = tkinter.LabelFrame(bodyContainer, bd=3, padx=5, pady=5)
         clustersListContainer['text'] = '----------'
-        clustersListContainer.place(relheight=1, x=3, relwidth=0.33, rely=0.5, anchor='w')
+        clustersListContainer.place(relheight=0.74, x=3, relwidth=0.33, rely=0.37, anchor='w')
         self.clustersListContainer = clustersListContainer
         clusterScrollBar = tkinter.Scrollbar(clustersListContainer)
         clusterScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
@@ -85,6 +87,15 @@ class WindowFormController:
         clusterScrollBar.config(command=clustersListbox.yview)
         clustersListbox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
         self.clustersListbox = clustersListbox
+
+        clusterTextBoxContainer = tkinter.Frame(bodyContainer, bd=3, padx=5, pady=5)
+        clusterTextBoxContainer.place(relheight=0.25, x=3, relwidth=0.33, rely=0.865, anchor='w')
+        clusterTextBoxScrollBar = tkinter.Scrollbar(clusterTextBoxContainer)
+        clusterTextBoxScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
+        clusterTextBox = tkinter.Text(clusterTextBoxContainer, wrap=tkinter.WORD, state=tkinter.DISABLED, yscrollcommand=clusterTextBoxScrollBar.set)
+        clusterTextBoxScrollBar.config(command=clusterTextBox.yview)
+        clusterTextBox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
+        self.clusterTextBox = clusterTextBox
 
         messagesContainer = tkinter.LabelFrame(bodyContainer, text='Сообщения', bd=3, padx=5, pady=5)
         messagesContainer.place(relheight=1, relx=0.35, relwidth=0.63, rely=0.5, anchor='w')

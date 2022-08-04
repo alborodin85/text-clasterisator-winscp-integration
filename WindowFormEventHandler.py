@@ -62,10 +62,9 @@ class WindowFormEventHandler:
             clustersListbox.insert(tkinter.END, clusterText)
 
     # noinspection PyUnusedLocal
-    def clustersListboxClick(self, event: tkinter.Event):
+    def clustersListboxClick(self, event: tkinter.Event, clusterTextBox: tkinter.Text):
         messagesListbox = self.windowFormController.messagesListbox
         openClusterInSublimeButton = self.windowFormController.openClusterInSublimeButton
-        messageTextBox = self.windowFormController.messageTextBox
         clustersListbox = self.windowFormController.clustersListbox
 
         currSelection = clustersListbox.curselection()
@@ -77,6 +76,12 @@ class WindowFormEventHandler:
         messagesListbox.delete(0, tkinter.END)
         for i in cluster:
             messagesListbox.insert(tkinter.END, self.clusteringResult.texts[i])
+
+        currText = clustersListbox.get(currSelection, currSelection)[0]
+        clusterTextBox['state'] = tkinter.NORMAL
+        clusterTextBox.delete(1.0, tkinter.END)
+        clusterTextBox.insert(1.0, currText)
+        clusterTextBox['state'] = tkinter.DISABLED
 
     @staticmethod
     def messagesListBoxClick(event: tkinter.Event, messageTextBox: tkinter.Text):

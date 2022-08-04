@@ -54,8 +54,14 @@ windowFormController.window.bind("<Configure>", windowFormEventHandler.onWindowC
 windowFormController.window.protocol("WM_DELETE_WINDOW", windowFormEventHandler.onWindowClose)
 windowFormController.startClusteringButton['command'] = lambda: startClustering(logPath)
 windowFormController.openInSublimeButton['command'] = windowFormEventHandler.openInSublime
-windowFormController.messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: windowFormEventHandler.messagesListBoxClick(listboxEvent, windowFormController.messageTextBox))
-windowFormController.clustersListbox.bind('<<ListboxSelect>>', lambda event: windowFormEventHandler.clustersListboxClick(event))
+windowFormController.messagesListbox.bind(
+    '<<ListboxSelect>>',
+    lambda listboxEvent: windowFormEventHandler.messagesListBoxClick(listboxEvent, windowFormController.messageTextBox)
+)
+windowFormController.clustersListbox.bind(
+    '<<ListboxSelect>>',
+    lambda event: windowFormEventHandler.clustersListboxClick(event, windowFormController.clusterTextBox)
+)
 windowFormController.openClusterInSublimeButton['command'] = lambda: windowFormEventHandler.openClusterInSublime()
 windowFormController.saveTextEditorButton['command'] = lambda: textEditorSettingsController.checkAndSavePath(windowFormController.textEditorEntry)
 windowFormController.settingsButton['command'] = settingsController.openSettingsInEditor
