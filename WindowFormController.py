@@ -28,6 +28,7 @@ class WindowFormController:
         self.buildTextEditorContainer(textEditorPathInit)
         self.buildTopContainer(logPath)
         self.buildRegExpContainer(startRowRegExpInit)
+        self.buildAlgorithmContainer()
         self.buildBodyContainer()
 
     def buildTextEditorContainer(self, textEditorPathInit: str):
@@ -72,6 +73,9 @@ class WindowFormController:
         settingsButton.place(height=29, relwidth=0.14, y=12, relx=0.85, anchor='w')
         self.settingsButton = settingsButton
 
+    def buildAlgorithmContainer(self):
+        algorithmContainer = tkinter.LabelFrame(self.window, text='Настройки алгоритма', bd=3, height=50)
+        algorithmContainer.pack(expand=False, fill=tkinter.BOTH, pady=5, padx=5)
     # noinspection DuplicatedCode
     def buildBodyContainer(self):
         bodyContainer = tkinter.Frame(self.window)
