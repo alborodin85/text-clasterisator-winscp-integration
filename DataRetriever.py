@@ -8,16 +8,22 @@ class DataRetriever:
     def readFile(logPath: str) -> str:
         fileSize = os.path.getsize(logPath)
         logFile = open(logPath, 'rb')
-        textFile = ''
+        textFile = None
         chunkSize = fileSize // 10
         msg = logFile.read(chunkSize)
         lineNumber = 0
         while len(msg):
             lineNumber += 1
-            textFile += str(msg)
+            # textFile += str(msg)
+            if textFile:
+                textFile += msg
+            else:
+                textFile = msg
             msg = logFile.read(chunkSize)
 
         logFile.close()
+
+        textFile = textFile.decode('utf-8')
 
         textFile = textFile.replace(r'\n', '\n')
         textFile = textFile.replace(r'\t', '\t')

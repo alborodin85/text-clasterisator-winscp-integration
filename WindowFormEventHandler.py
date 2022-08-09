@@ -40,9 +40,9 @@ class WindowFormEventHandler:
     def openClusterInSublime(self):
         if not self.clusteringResult.clustersItems:
             return
-        f = open(self.clusterTempFile, 'w')
+        f = open(self.clusterTempFile, 'wb')
         for messageId in self.clusteringResult.clustersItems[self.selectedCluster]:
-            f.write(self.clusteringResult.texts[messageId])
+            f.write(self.clusteringResult.texts[messageId].encode('utf-8'))
         f.close()
         # noinspection PyBroadException
         try:
