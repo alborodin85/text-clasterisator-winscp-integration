@@ -61,6 +61,7 @@ class WindowFormEventHandler:
         clustersListbox.delete(0, tkinter.END)
         for i in range(len(clusteringResult.clustersWords)):
             clusterText = ''
+            clusterText += f'[{i}] '
             clusterText += '(' + str(clusteringResult.clustersItemsCount[i]) + ')'
             clusterText += ' '
             clusterText += ', '.join(clusteringResult.clustersWords[i])
