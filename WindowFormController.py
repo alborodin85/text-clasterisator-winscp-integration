@@ -3,7 +3,16 @@ import tkinter
 
 class WindowFormController:
     def __init__(
-            self, currentScriptFolder: str, windowWidth: int, windowHeight: int, logPath: str, startRowRegExpInit: str, textEditorPathInit: str
+            self,
+            currentScriptFolder: str,
+            windowWidth: int,
+            windowHeight: int,
+            logPath: str,
+            startRowRegExpInit: str,
+            textEditorPathInit: str,
+            algorithmIdValueInit: int,
+            countClustersValueInit: int,
+            countRowsValueInit: int,
     ):
         window = tkinter.Tk()
         window.title("Кластеризатор сообщений журнальных файлов")
@@ -16,6 +25,7 @@ class WindowFormController:
         self.startClusteringButton = tkinter.Button()
         self.regExpEntry = tkinter.Entry()
         self.clustersListbox = tkinter.Listbox()
+        self.clusterTextBox = tkinter.Text()
         self.messagesListbox = tkinter.Listbox()
         self.messageTextBox = tkinter.Text()
         self.openClusterInSublimeButton = tkinter.Button()
@@ -24,9 +34,17 @@ class WindowFormController:
         self.clustersListContainer = tkinter.LabelFrame()
         self.settingsButton = tkinter.Button()
 
+        self.algorithmId = tkinter.IntVar()
+        self.algorithmId.set(algorithmIdValueInit)
+        self.countClusters = tkinter.StringVar()
+        self.countClusters.set(str(countClustersValueInit))
+        self.countRows = tkinter.StringVar()
+        self.countRows.set(str(countRowsValueInit))
+
         self.buildTextEditorContainer(textEditorPathInit)
         self.buildTopContainer(logPath)
         self.buildRegExpContainer(startRowRegExpInit)
+        self.buildAlgorithmContainer()
         self.buildBodyContainer()
 
     def buildTextEditorContainer(self, textEditorPathInit: str):
@@ -71,13 +89,37 @@ class WindowFormController:
         settingsButton.place(height=29, relwidth=0.14, y=12, relx=0.85, anchor='w')
         self.settingsButton = settingsButton
 
+    def buildAlgorithmContainer(self):
+        algorithmContainer = tkinter.LabelFrame(self.window, text='Настройки алгоритма', bd=3, height=50)
+        algorithmContainer.pack(expand=False, fill=tkinter.BOTH, pady=5, padx=5)
+
+        dbscanRadio = tkinter.Radiobutton(master=algorithmContainer, text='DBSCAN', value=1, variable=self.algorithmId, padx=15)
+        dbscanRadio.pack(side=tkinter.LEFT)
+        birchRadio = tkinter.Radiobutton(master=algorithmContainer, text='BIRCH', value=2, variable=self.algorithmId, padx=15)
+        birchRadio.pack(side=tkinter.LEFT)
+        kmeansRadio = tkinter.Radiobutton(master=algorithmContainer, text='K-MEANS', value=3, variable=self.algorithmId, padx=15)
+        kmeansRadio.pack(side=tkinter.LEFT)
+
+        countClusterLabel = tkinter.Label(master=algorithmContainer, text='Число кластеров:')
+        countClusterLabel.pack(side=tkinter.LEFT)
+        countClusterEntry = tkinter.Entry(master=algorithmContainer, textvariable=self.countClusters, width=3)
+        countClusterEntry.pack(side=tkinter.LEFT)
+
+        breakLabel = tkinter.Label(master=algorithmContainer, padx=8)
+        breakLabel.pack(side=tkinter.LEFT)
+        countRowsLabel = tkinter.Label(master=algorithmContainer, text='Оставить строк:')
+        countRowsLabel.pack(side=tkinter.LEFT)
+        countRowsEntry = tkinter.Entry(master=algorithmContainer, textvariable=self.countRows, width=3)
+        countRowsEntry.pack(side=tkinter.LEFT)
+
     # noinspection DuplicatedCode
     def buildBodyContainer(self):
         bodyContainer = tkinter.Frame(self.window)
         bodyContainer.pack(pady=5, padx=5, fill=tkinter.BOTH, expand=True)
+
         clustersListContainer = tkinter.LabelFrame(bodyContainer, bd=3, padx=5, pady=5)
         clustersListContainer['text'] = '----------'
-        clustersListContainer.place(relheight=1, x=3, relwidth=0.33, rely=0.5, anchor='w')
+        clustersListContainer.place(relheight=0.74, x=3, relwidth=0.33, rely=0.37, anchor='w')
         self.clustersListContainer = clustersListContainer
         clusterScrollBar = tkinter.Scrollbar(clustersListContainer)
         clusterScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
@@ -85,6 +127,15 @@ class WindowFormController:
         clusterScrollBar.config(command=clustersListbox.yview)
         clustersListbox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
         self.clustersListbox = clustersListbox
+
+        clusterTextBoxContainer = tkinter.Frame(bodyContainer, bd=3, padx=5, pady=5)
+        clusterTextBoxContainer.place(relheight=0.25, x=3, relwidth=0.33, rely=0.865, anchor='w')
+        clusterTextBoxScrollBar = tkinter.Scrollbar(clusterTextBoxContainer)
+        clusterTextBoxScrollBar.pack(fill=tkinter.Y, side=tkinter.RIGHT)
+        clusterTextBox = tkinter.Text(clusterTextBoxContainer, wrap=tkinter.WORD, state=tkinter.DISABLED, yscrollcommand=clusterTextBoxScrollBar.set)
+        clusterTextBoxScrollBar.config(command=clusterTextBox.yview)
+        clusterTextBox.pack(fill=tkinter.BOTH, expand=True, side=tkinter.LEFT)
+        self.clusterTextBox = clusterTextBox
 
         messagesContainer = tkinter.LabelFrame(bodyContainer, text='Сообщения', bd=3, padx=5, pady=5)
         messagesContainer.place(relheight=1, relx=0.35, relwidth=0.63, rely=0.5, anchor='w')

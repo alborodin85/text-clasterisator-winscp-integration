@@ -10,6 +10,12 @@ import tkinter
 def startClustering(logPathLocal):
     startRowRegExp = str(windowFormController.regExpEntry.get())
     settingsController.saveRegExp(startRowRegExp)
+    algorithmIdValue = windowFormController.algorithmId.get()
+    settingsController.saveAlgorithmId(algorithmIdValue)
+    countClustersValue = windowFormController.countClusters.get()
+    settingsController.saveCountClusters(int(countClustersValue))
+    countRowsValue = windowFormController.countRows.get()
+    settingsController.saveCountRows(int(countRowsValue))
     if startRowRegExp and logPathLocal:
         windowFormController.clustersListbox.delete(0, tkinter.END)
         windowFormController.messagesListbox.delete(0, tkinter.END)
@@ -19,7 +25,7 @@ def startClustering(logPathLocal):
         windowFormController.clustersListContainer['text'] = '----------'
         windowFormController.window.update()
 
-        clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController.window)
+        clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController)
         windowFormEventHandler.renderResult(clusteringResult)
 
         windowFormController.clustersListContainer['text'] = f'Кластеры ({len(clusteringResult.clustersItems)})'
@@ -33,6 +39,9 @@ textEditorPath = textEditorSettingsController.getTextEditorPath()
 logPath = FilePathController.getLogPath()
 settingsController = SettingsController(currentScriptFolder, logPath, textEditorPath)
 startRowRegExpInit = settingsController.getRegExp()
+algorithmIdValueInit = settingsController.getAlgorithmId()
+countClustersValueInit = settingsController.getCountClusters()
+countRowsValueInit = settingsController.getCountRows()
 
 windowFormController = WindowFormController(
     currentScriptFolder=currentScriptFolder,
@@ -40,7 +49,10 @@ windowFormController = WindowFormController(
     windowHeight=600,
     logPath=logPath,
     startRowRegExpInit=startRowRegExpInit,
-    textEditorPathInit=textEditorPath
+    textEditorPathInit=textEditorPath,
+    algorithmIdValueInit=algorithmIdValueInit,
+    countClustersValueInit=countClustersValueInit,
+    countRowsValueInit=countRowsValueInit,
 )
 windowFormEventHandler = WindowFormEventHandler(
     windowWidth=windowFormController.windowWidth,
@@ -54,8 +66,14 @@ windowFormController.window.bind("<Configure>", windowFormEventHandler.onWindowC
 windowFormController.window.protocol("WM_DELETE_WINDOW", windowFormEventHandler.onWindowClose)
 windowFormController.startClusteringButton['command'] = lambda: startClustering(logPath)
 windowFormController.openInSublimeButton['command'] = windowFormEventHandler.openInSublime
-windowFormController.messagesListbox.bind('<<ListboxSelect>>', lambda listboxEvent: windowFormEventHandler.messagesListBoxClick(listboxEvent, windowFormController.messageTextBox))
-windowFormController.clustersListbox.bind('<<ListboxSelect>>', lambda event: windowFormEventHandler.clustersListboxClick(event))
+windowFormController.messagesListbox.bind(
+    '<<ListboxSelect>>',
+    lambda listboxEvent: windowFormEventHandler.messagesListBoxClick(listboxEvent, windowFormController.messageTextBox)
+)
+windowFormController.clustersListbox.bind(
+    '<<ListboxSelect>>',
+    lambda event: windowFormEventHandler.clustersListboxClick(event, windowFormController.clusterTextBox)
+)
 windowFormController.openClusterInSublimeButton['command'] = lambda: windowFormEventHandler.openClusterInSublime()
 windowFormController.saveTextEditorButton['command'] = lambda: textEditorSettingsController.checkAndSavePath(windowFormController.textEditorEntry)
 windowFormController.settingsButton['command'] = settingsController.openSettingsInEditor
@@ -73,8 +91,8 @@ windowFormController.window.bind(
     lambda event: windowFormController.messageTextBox.insert(4.0, f'Процесс TF-IDF завершен. Birch-кластеризация...\n')
 )
 windowFormController.window.bind(
-    "<<birchClusteringFinishedEvent>>",
-    lambda event: windowFormController.messageTextBox.insert(5.0, f'Birch-кластеризация завершена. Обработка результатов...\n')
+    "<<clusteringFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(5.0, f'Кластеризация завершена. Обработка результатов...\n')
 )
 windowFormController.window.bind(
     "<<parsePredictionFinishedEvent>>",

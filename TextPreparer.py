@@ -21,6 +21,19 @@ class TextPreparer:
         self.synonymizer = Synonymizer()
 
     @staticmethod
+    def sliceMessages(texts: pandas.Series, countRows: int) -> pandas.Series:
+        if not countRows:
+            return texts
+        result = []
+        for textItem in texts:
+            rows = textItem.split('\n')
+            message = '\n'.join(rows[:countRows])
+            message += '\n'
+            result.append(message)
+
+        return pandas.Series(result)
+
+    @staticmethod
     def clearRearWords(train: pandas.Series, minCountRepeat=1, inAllDocument=False) -> pandas.Series:
         dictionary = {}
         arRows = []
@@ -57,7 +70,7 @@ class TextPreparer:
 
 
     @staticmethod
-    def vectorizeLabels(strLabels: list) -> np.ndarray:
+    def vectorizeLabels(strLabels: np.ndarray) -> np.ndarray:
         labelsUniq = list(set(strLabels))
         labelVector = []
         for labelFactId in range(len(strLabels)):
@@ -156,7 +169,7 @@ class TextPreparer:
         itemsInLastButch = countSamples % itemsInButch
         if itemsInLastButch:
             countButches += 1
-            
+
         if countButches == 1 :
             itemsInButch = itemsInLastButch
 
