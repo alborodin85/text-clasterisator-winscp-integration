@@ -100,7 +100,7 @@ class WindowFormController:
         kmeansRadio = tkinter.Radiobutton(master=algorithmContainer, text='K-MEANS', value=3, variable=self.algorithmId, padx=15)
         kmeansRadio.pack(side=tkinter.LEFT)
 
-        countClusterLabel = tkinter.Label(master=algorithmContainer, text='Число кластеров:')
+        countClusterLabel = tkinter.Label(master=algorithmContainer, text='Число кластеров (для K-MEANS):')
         countClusterLabel.pack(side=tkinter.LEFT)
         countClusterEntry = tkinter.Entry(master=algorithmContainer, textvariable=self.countClusters, width=3)
         countClusterEntry.pack(side=tkinter.LEFT)
