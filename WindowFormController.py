@@ -25,12 +25,15 @@ class WindowFormController:
         self.clustersListContainer = tkinter.LabelFrame()
         self.settingsButton = tkinter.Button()
 
+        self.algorithmId = tkinter.IntVar()
+        self.countClusterValue = tkinter.StringVar()
+        self.countRowsValue = tkinter.StringVar()
+
         self.buildTextEditorContainer(textEditorPathInit)
         self.buildTopContainer(logPath)
         self.buildRegExpContainer(startRowRegExpInit)
         self.buildAlgorithmContainer()
         self.buildBodyContainer()
-
     def buildTextEditorContainer(self, textEditorPathInit: str):
         textEditorPath = tkinter.StringVar()
         textEditorPath.set(textEditorPathInit)
@@ -76,6 +79,29 @@ class WindowFormController:
     def buildAlgorithmContainer(self):
         algorithmContainer = tkinter.LabelFrame(self.window, text='Настройки алгоритма', bd=3, height=50)
         algorithmContainer.pack(expand=False, fill=tkinter.BOTH, pady=5, padx=5)
+
+        dbscanRadio = tkinter.Radiobutton(master=algorithmContainer, text='DBSCAN', value=1, variable=self.algorithmId, padx=15)
+        dbscanRadio.pack(side=tkinter.LEFT)
+        birchRadio = tkinter.Radiobutton(master=algorithmContainer, text='BIRCH', value=2, variable=self.algorithmId, padx=15)
+        birchRadio.pack(side=tkinter.LEFT)
+        kmeansRadio = tkinter.Radiobutton(master=algorithmContainer, text='K-MEANS', value=3, variable=self.algorithmId, padx=15)
+        kmeansRadio.pack(side=tkinter.LEFT)
+        self.algorithmId.set(1)
+
+        countClusterLabel = tkinter.Label(master=algorithmContainer, text='Число кластеров:')
+        countClusterLabel.pack(side=tkinter.LEFT)
+        countClusterEntry = tkinter.Entry(master=algorithmContainer, textvariable=self.countClusterValue, width=3)
+        countClusterEntry.pack(side=tkinter.LEFT)
+        self.countClusterValue.set('')
+
+        breakLabel = tkinter.Label(master=algorithmContainer, padx=8)
+        breakLabel.pack(side=tkinter.LEFT)
+        countRowsLabel = tkinter.Label(master=algorithmContainer, text='Оставить строк:')
+        countRowsLabel.pack(side=tkinter.LEFT)
+        countRowsEntry = tkinter.Entry(master=algorithmContainer, textvariable=self.countRowsValue, width=3)
+        countRowsEntry.pack(side=tkinter.LEFT)
+        self.countRowsValue.set('')
+
     # noinspection DuplicatedCode
     def buildBodyContainer(self):
         bodyContainer = tkinter.Frame(self.window)

@@ -3,27 +3,34 @@ from TextPreparer import TextPreparer
 from ResultHandler import ResultHandler
 from sklearn.cluster import Birch
 from ClusteringResult import ClusteringResult
+from WindowFormController import WindowFormController
+from StrategyBirch import StrategyBirch
+from StrategyDbscan import StrategyDbscan
+from StrategyKmeans import StrategyKmeans
 import tkinter
 
 
 class ClusteringObject:
     @staticmethod
-    def main(logPath: str, startRowRegExp: str, pr: tkinter.Tk) -> ClusteringResult:
+    def main(logPath: str, startRowRegExp: str, windowFormController: WindowFormController) -> ClusteringResult:
+        pr = windowFormController.window
         startRowRegExp = f'({startRowRegExp})'
         textFile = DataRetriever.readFile(logPath)
         countRows = 0
         texts = DataRetriever.splitText(startRowRegExp, textFile, countRows)
 
         textPreparer = TextPreparer()
+        leaveRowsValue = int(windowFormController.countRowsValue.get()) if windowFormController.countRowsValue.get() else 0
+        texts = textPreparer.sliceMessages(texts, leaveRowsValue)
         train = textPreparer.prepare(
             texts,
             strip=True,
             lower=True,
             clearPunctuation=True,
             clearDigits=True,
-            stopWordsEnglish=True,
+            stopWordsEnglish=False,
             stopWordsRussian=False,
-            lemmatizationEnglish=True,
+            lemmatizationEnglish=False,
             stemmingEnglish=False,
             stemmingRussian=False,
             sinonymizeEnglish=False,
@@ -38,13 +45,21 @@ class ClusteringObject:
         dictionary = features[1]
         pr.event_generate('<<tfidfFinishedEvent>>')
 
-        brc = Birch(threshold=0.5, branching_factor=50, n_clusters=None, compute_labels=True)
-        itemsInButch = 1000
-        batches = textPreparer.splitTrainData(itemsInButch, train)
-        for i in range(len(batches)):
-            brc.partial_fit(batches[i])
-        birchPredictions = brc.predict(train)
-        pr.event_generate('<<birchClusteringFinishedEvent>>')
+        # clusterStrategy = StrategyBirch()
+        if windowFormController.algorithmId.get() == 1:
+            clusterStrategy = StrategyDbscan()
+        elif windowFormController.algorithmId.get() == 2:
+            clusterStrategy = StrategyBirch()
+        elif windowFormController.algorithmId.get() == 3:
+            nClusters = int(windowFormController.countClusterValue.get()) if windowFormController.countClusterValue.get() else 1
+            clusterStrategy = StrategyKmeans(nClusters)
+        else:
+            clusterStrategy = StrategyBirch()
+
+        birchPredictions = clusterStrategy.clusterize(train)
+        pr.event_generate('<<clusteringFinishedEvent>>')
+
+        print(birchPredictions.__class__)
 
         birchPredictions = TextPreparer.vectorizeLabels(birchPredictions)
         [clustersItems, clustersItemsCount, clustersWords] = ResultHandler.parsePridictions(dictionary, birchPredictions, train)

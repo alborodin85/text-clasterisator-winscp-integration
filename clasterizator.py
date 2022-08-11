@@ -19,7 +19,7 @@ def startClustering(logPathLocal):
         windowFormController.clustersListContainer['text'] = '----------'
         windowFormController.window.update()
 
-        clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController.window)
+        clusteringResult = ClusteringObject().main(logPathLocal, startRowRegExp, windowFormController)
         windowFormEventHandler.renderResult(clusteringResult)
 
         windowFormController.clustersListContainer['text'] = f'Кластеры ({len(clusteringResult.clustersItems)})'
@@ -79,8 +79,8 @@ windowFormController.window.bind(
     lambda event: windowFormController.messageTextBox.insert(4.0, f'Процесс TF-IDF завершен. Birch-кластеризация...\n')
 )
 windowFormController.window.bind(
-    "<<birchClusteringFinishedEvent>>",
-    lambda event: windowFormController.messageTextBox.insert(5.0, f'Birch-кластеризация завершена. Обработка результатов...\n')
+    "<<clusteringFinishedEvent>>",
+    lambda event: windowFormController.messageTextBox.insert(5.0, f'Кластеризация завершена. Обработка результатов...\n')
 )
 windowFormController.window.bind(
     "<<parsePredictionFinishedEvent>>",
