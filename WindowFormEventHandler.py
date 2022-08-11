@@ -40,6 +40,11 @@ class WindowFormEventHandler:
     def openClusterInSublime(self):
         if not self.clusteringResult.clustersItems:
             return
+
+        if self.selectedCluster >= len(self.clusteringResult.clustersItems):
+            tkinter.messagebox.showwarning("Предупреждение", "Необходимо выбрать кластер")
+            return
+
         f = open(self.clusterTempFile, 'wb')
         for messageId in self.clusteringResult.clustersItems[self.selectedCluster]:
             f.write(self.clusteringResult.texts[messageId].encode('utf-8'))

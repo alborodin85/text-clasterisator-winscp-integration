@@ -10,6 +10,12 @@ import tkinter
 def startClustering(logPathLocal):
     startRowRegExp = str(windowFormController.regExpEntry.get())
     settingsController.saveRegExp(startRowRegExp)
+    algorithmIdValue = windowFormController.algorithmId.get()
+    settingsController.saveAlgorithmId(algorithmIdValue)
+    countClustersValue = windowFormController.countClusters.get()
+    settingsController.saveCountClusters(int(countClustersValue))
+    countRowsValue = windowFormController.countRows.get()
+    settingsController.saveCountRows(int(countRowsValue))
     if startRowRegExp and logPathLocal:
         windowFormController.clustersListbox.delete(0, tkinter.END)
         windowFormController.messagesListbox.delete(0, tkinter.END)
@@ -33,6 +39,9 @@ textEditorPath = textEditorSettingsController.getTextEditorPath()
 logPath = FilePathController.getLogPath()
 settingsController = SettingsController(currentScriptFolder, logPath, textEditorPath)
 startRowRegExpInit = settingsController.getRegExp()
+algorithmIdValueInit = settingsController.getAlgorithmId()
+countClustersValueInit = settingsController.getCountClusters()
+countRowsValueInit = settingsController.getCountRows()
 
 windowFormController = WindowFormController(
     currentScriptFolder=currentScriptFolder,
@@ -40,7 +49,10 @@ windowFormController = WindowFormController(
     windowHeight=600,
     logPath=logPath,
     startRowRegExpInit=startRowRegExpInit,
-    textEditorPathInit=textEditorPath
+    textEditorPathInit=textEditorPath,
+    algorithmIdValueInit=algorithmIdValueInit,
+    countClustersValueInit=countClustersValueInit,
+    countRowsValueInit=countRowsValueInit,
 )
 windowFormEventHandler = WindowFormEventHandler(
     windowWidth=windowFormController.windowWidth,

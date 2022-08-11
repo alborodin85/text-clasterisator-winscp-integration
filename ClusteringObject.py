@@ -20,7 +20,7 @@ class ClusteringObject:
         texts = DataRetriever.splitText(startRowRegExp, textFile, countRows)
 
         textPreparer = TextPreparer()
-        leaveRowsValue = int(windowFormController.countRowsValue.get()) if windowFormController.countRowsValue.get() else 0
+        leaveRowsValue = int(windowFormController.countRows.get()) if windowFormController.countRows.get() else 0
         texts = textPreparer.sliceMessages(texts, leaveRowsValue)
         train = textPreparer.prepare(
             texts,
@@ -51,15 +51,13 @@ class ClusteringObject:
         elif windowFormController.algorithmId.get() == 2:
             clusterStrategy = StrategyBirch()
         elif windowFormController.algorithmId.get() == 3:
-            nClusters = int(windowFormController.countClusterValue.get()) if windowFormController.countClusterValue.get() else 1
+            nClusters = int(windowFormController.countClusters.get()) if windowFormController.countClusters.get() else 1
             clusterStrategy = StrategyKmeans(nClusters)
         else:
             clusterStrategy = StrategyBirch()
 
         birchPredictions = clusterStrategy.clusterize(train)
         pr.event_generate('<<clusteringFinishedEvent>>')
-
-        print(birchPredictions.__class__)
 
         birchPredictions = TextPreparer.vectorizeLabels(birchPredictions)
         [clustersItems, clustersItemsCount, clustersWords] = ResultHandler.parsePridictions(dictionary, birchPredictions, train)
