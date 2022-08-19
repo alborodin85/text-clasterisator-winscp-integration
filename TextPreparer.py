@@ -109,7 +109,8 @@ class TextPreparer:
         punctuation = dict.fromkeys([i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith('P')], ' ')
 
         digits = dict.fromkeys(
-            i for i in range(sys.maxunicode) if unicodedata.category(chr(i)) == 'Nd'
+            [i for i in range(sys.maxunicode) if unicodedata.category(chr(i)) == 'Nd'],
+            ''
         )
 
         def handleString(string: str) -> str:

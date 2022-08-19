@@ -26,7 +26,7 @@ class ClusteringObject:
             texts,
             strip=True,
             lower=True,
-            clearPunctuation=True,
+            clearPunctuation=False,
             clearDigits=True,
             stopWordsEnglish=False,
             stopWordsRussian=False,
