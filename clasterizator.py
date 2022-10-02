@@ -88,7 +88,7 @@ windowFormController.window.bind(
 )
 windowFormController.window.bind(
     "<<tfidfFinishedEvent>>",
-    lambda event: windowFormController.messageTextBox.insert(4.0, f'Процесс TF-IDF завершен. Birch-кластеризация...\n')
+    lambda event: windowFormController.messageTextBox.insert(4.0, f'Процесс TF-IDF завершен. Кластеризация...\n')
 )
 windowFormController.window.bind(
     "<<clusteringFinishedEvent>>",
